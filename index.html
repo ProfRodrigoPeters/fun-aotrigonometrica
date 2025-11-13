@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funções Trigonométricas Interativas</title>
+    
+    <!-- Carrega o Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Carrega a folha de estilos customizada -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8 flex flex-col items-center justify-center">
+
+    <div class="w-full max-w-7xl bg-white rounded-2xl shadow-xl p-6 md:p-8">
+        
+        <!-- Título -->
+        <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8">
+            Aula Interativa: Funções Trigonométricas
+        </h1>
+
+        <!-- Container Principal (Grid) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- Coluna 1: Círculo Trigonométrico -->
+            <div class="border border-gray-200 rounded-lg p-6 shadow-md">
+                <h2 class="text-2xl font-semibold text-center mb-4 text-gray-700">Círculo Trigonométrico</h2>
+                
+                <!-- Canvas para o Círculo -->
+                <canvas id="trigCircle" class="w-full h-auto aspect-square rounded-lg bg-gray-50"></canvas>
+                
+                <!-- Controle Deslizante (Slider) -->
+                <div class="mt-6">
+                    <label for="angleSlider" class="block text-sm font-medium text-gray-700 mb-2">Ângulo (Arraste para mudar):</label>
+                    <input type="range" id="angleSlider" min="0" max="6.28318" step="0.01" value="0" class="w-full">
+                </div>
+                
+                <!-- Exibição de Valores -->
+                <div class="mt-4 grid grid-cols-2 gap-4 text-center">
+                    <div class="bg-blue-100 text-blue-800 p-3 rounded-lg">
+                        <span class="block text-sm font-medium">Ângulo (Graus)</span>
+                        <span id="angleDeg" class="text-xl font-bold">0°</span>
+                    </div>
+                    <div class="bg-indigo-100 text-indigo-800 p-3 rounded-lg">
+                        <span class="block text-sm font-medium">Ângulo (Rad)</span>
+                        <span id="angleRad" class="text-xl font-bold">0.00</span>
+                    </div>
+                    <div class="bg-red-100 text-red-800 p-3 rounded-lg">
+                        <span class="block text-sm font-medium">Seno (y)</span>
+                        <span id="sinValue" class="text-xl font-bold">0.00</span>
+                    </div>
+                    <div class="bg-green-100 text-green-800 p-3 rounded-lg">
+                        <span class="block text-sm font-medium">Cosseno (x)</span>
+                        <span id="cosValue" class="text-xl font-bold">1.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna 2: Gráfico da Função -->
+            <div class="border border-gray-200 rounded-lg p-6 shadow-md">
+                <h2 class="text-2xl font-semibold text-center mb-4 text-gray-700">Gráfico da Função</h2>
+                
+                <!-- Botões de Seleção de Função -->
+                <div class="flex flex-wrap justify-center gap-2 mb-4">
+                    <button id="btnSin" class="flex-1 min-w-[100px] px-4 py-2 rounded-md font-semibold text-white bg-blue-600 shadow-md transition-all duration-200 ring-4 ring-transparent">
+                        y = sen(x)
+                    </button>
+                    <button id="btnCos" class="flex-1 min-w-[100px] px-4 py-2 rounded-md font-semibold text-blue-600 bg-white border border-blue-600 transition-all duration-200 ring-4 ring-transparent">
+                        y = cos(x)
+                    </button>
+                    <button id="btnTan" class="flex-1 min-w-[100px] px-4 py-2 rounded-md font-semibold text-blue-600 bg-white border border-blue-600 transition-all duration-200 ring-4 ring-transparent">
+                        y = tan(x)
+                    </button>
+                    <button id="btnSin2x" class="flex-1 min-w-[100px] px-4 py-2 rounded-md font-semibold text-blue-600 bg-white border border-blue-600 transition-all duration-200 ring-4 ring-transparent">
+                        y = sen(2x)
+                    </button>
+                    <button id="btnCustom" class="w-full mt-2 px-4 py-2 rounded-md font-semibold text-blue-600 bg-white border border-blue-600 transition-all duration-200 ring-4 ring-transparent">
+                        y = 5 + sen(3x-2)
+                    </button>
+                </div>
+                
+                <!-- Canvas para o Gráfico -->
+                <div class="relative w-full h-[400px] lg:h-auto lg:aspect-video">
+                     <canvas id="functionGraph" class="w-full h-full rounded-lg bg-gray-50"></canvas>
+                </div>
+
+                <!-- NOVO BOTÃO DE ESBOÇO -->
+                <div class="mt-4">
+                    <button id="btnSketch" class="w-full px-4 py-2 rounded-md font-semibold text-white bg-teal-600 hover:bg-teal-700 transition-all duration-200 shadow-md">
+                        Esboçar Gráfico e Tabela
+                    </button>
+                </div>
+
+                <!-- NOVA TABELA -->
+                <div id="tableContainer" class="hidden mt-4 h-48 overflow-y-auto border border-gray-200 rounded-lg">
+                    <table class="w-full min-w-max text-sm text-left text-gray-700">
+                        <thead class="text-xs text-gray-800 uppercase bg-gray-100 sticky top-0">
+                            <tr>
+                                <th scope="col" class="px-4 py-2">Ângulo (x)</th>
+                                <th scope="col" class="px-4 py-2">Valor (y)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Linhas serão adicionadas aqui via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Explicação dos Exemplos -->
+                <div class="mt-6 text-gray-600">
+                    <p class="font-semibold mb-2">Exemplos de Funções:</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li><strong>Seno (sen):</strong> Representa a coordenada Y no círculo. Período: 2π. Imagem: [-1, 1].</li>
+                        <li><strong>Cosseno (cos):</strong> Representa a coordenada X no círculo. Período: 2π. Imagem: [-1, 1].</li>
+                        <li><strong>Tangente (tan):</strong> Razão `sen(x) / cos(x)`. Período: π. Imagem: (-&infin;, +&infin;).</li>
+                        <li><strong>Seno (2x):</strong> Frequência dobrada. Período: π. Imagem: [-1, 1].</li>
+                        <li><strong>5 + sen(3x-2):</strong> Função deslocada e comprimida.
+                            <ul>
+                                <li>- <strong>Período:</strong> 2π/3 (frequência 3x)</li>
+                                <li>- <strong>Imagem:</strong> [4, 6] (Amplitude 1, deslocada 5 para cima)</li>
+                                <li>- <strong>Fase:</strong> Deslocada `2/3` para a direita.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carrega o arquivo JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
